@@ -1,0 +1,30 @@
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+build/
+dist/
+
+# Runtime state, evidence, logs, models
+var/
+
+# Local input data: never committed
+data/private/
+services/ocp-physics-digitalTwin/data/
+*.local.*
+
+# Secrets and local environment files
+.env
+.env.*
+!.env.example
+
+# OS and editors
+.DS_Store
+.idea/
+.vscode/

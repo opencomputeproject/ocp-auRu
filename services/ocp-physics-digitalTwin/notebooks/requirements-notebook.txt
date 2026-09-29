@@ -1,0 +1,6 @@
+# Extra dependencies for running notebooks/twin_walkthrough.ipynb, on top of ../requirements.txt.
+# pip install -r requirements.txt -r notebooks/requirements-notebook.txt
+jupyter>=1.0
+ipykernel>=6.29
+nbformat>=5.10
+matplotlib>=3.8

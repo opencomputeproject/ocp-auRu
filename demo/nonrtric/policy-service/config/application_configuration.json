@@ -1,0 +1,14 @@
+{
+    "config": {
+        "ric": [
+            {
+                "name": "ric1",
+                "baseUrl": "http://ocp-auru-a1-sim-STD-v2:8085/",
+                "managedElementIds": [
+                    "me-1",
+                    "me-2"
+                ]
+            }
+        ]
+    }
+}

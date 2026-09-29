@@ -1,0 +1,85 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 UGECO Private Limited
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# O-RAN SC NONRTRIC platform services for the `full` profile (HLD ADR-1).
+#
+#   docker compose -p ocp-auru -f demo/nonrtric/docker-compose.yaml up -d              # ICS + rApp Catalogue
+#   docker compose -p ocp-auru -f demo/nonrtric/docker-compose.yaml --profile a1 up -d # + A1 PMS + A1 simulator (optional, not on the actuation path)
+#
+# Image tags are those upstream's docker-compose/.env on master is tested with.
+# Defaults are inlined so the file works even without the sibling `.env`.
+# Host ports are published on BIND_IP (default 127.0.0.1): ICS and the rApp Catalogue have no
+# authentication, and nothing in the demo needs them on the LAN. Set BIND_IP=0.0.0.0 deliberately.
+name: ocp-auru
+
+networks:
+  ocp-auru-net:
+    name: ocp-auru-net
+    driver: bridge
+
+services:
+  # R1 data management & exposure: Information Coordinator Service (producer/consumer job broker).
+  ics:
+    image: "${ICS_IMAGE_BASE:-nexus3.o-ran-sc.org:10002/o-ran-sc/nonrtric-information-coordinator-service}:${ICS_IMAGE_TAG:-1.2.1}"
+    platform: linux/amd64   # upstream images are amd64-only; emulated on arm64 hosts (Docker Desktop)
+    container_name: ocp-auru-ics
+    networks:
+      - ocp-auru-net
+    ports:
+      - "${BIND_IP:-127.0.0.1}:${ICS_HOST_PORT:-18083}:8083"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # ICS calls the SMO's producer callback on the host
+
+  # R1 service management: rApp Catalogue (the es-rApp registers itself here).
+  rapp-catalogue:
+    image: "${CATALOGUE_IMAGE_BASE:-nexus3.o-ran-sc.org:10002/o-ran-sc/nonrtric-r-app-catalogue}:${CATALOGUE_IMAGE_TAG:-1.0.2}"
+    platform: linux/amd64   # upstream images are amd64-only; emulated on arm64 hosts (Docker Desktop)
+    container_name: ocp-auru-rapp-catalogue
+    networks:
+      - ocp-auru-net
+    ports:
+      - "${BIND_IP:-127.0.0.1}:${CATALOGUE_HOST_PORT:-18680}:8680"
+
+  # Optional (profile `a1`): A1 Policy Management Service + an A1 simulator standing in for a
+  # Near-RT RIC. A1 is NOT on the energy-saving actuation path (HLD ADR-2); this only shows
+  # the platform is complete.
+  a1pms:
+    profiles: ["a1"]
+    image: "${PMS_IMAGE_BASE:-nexus3.o-ran-sc.org:10002/o-ran-sc/nonrtric-a1-policy-management-service}:${PMS_IMAGE_TAG:-2.3.1}"
+    platform: linux/amd64   # upstream images are amd64-only; emulated on arm64 hosts (Docker Desktop)
+    container_name: ocp-auru-a1pms
+    networks:
+      - ocp-auru-net
+    ports:
+      - "${BIND_IP:-127.0.0.1}:${PMS_HOST_PORT:-18081}:8081"
+    volumes:
+      - ./policy-service/config/application_configuration.json:/opt/app/policy-agent/data/application_configuration.json:ro
+      - ./policy-service/config/application-policyagent.yaml:/opt/app/policy-agent/config/application.yaml:ro
+    depends_on:
+      - a1-sim-STD-v2
+
+  a1-sim-STD-v2:
+    profiles: ["a1"]
+    image: "${A1SIM_IMAGE_BASE:-nexus3.o-ran-sc.org:10002/o-ran-sc/a1-simulator}:${A1SIM_IMAGE_TAG:-2.2.0}"
+    platform: linux/amd64   # upstream images are amd64-only; emulated on arm64 hosts (Docker Desktop)
+    container_name: ocp-auru-a1-sim-STD-v2
+    networks:
+      - ocp-auru-net
+    ports:
+      - "${BIND_IP:-127.0.0.1}:${A1SIM_HOST_PORT:-18085}:8085"
+    environment:
+      - A1_VERSION=STD_2.0.0
+      - REMOTE_HOSTS_LOGGING=1
+      - ALLOW_HTTP=true
