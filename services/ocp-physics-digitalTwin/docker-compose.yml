@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 UGECO Private Limited
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Standalone service. Two ways to run it:
+#
+#   docker compose --profile generic up -d --build       # generic mode: NO data, NO mounts,
+#                                                        # a fictional hex estate with
+#                                                        # uncalibrated 3GPP defaults
+#   docker compose up -d --build                         # calibration mode: your own input
+#                                                        # files from ./data, mounted
+#                                                        # read-only (see README)
+#
+# The image is the same code-only build in both cases; only env and mounts differ.
+services:
+  physics-twin:
+    build: .
+    container_name: physics-twin
+    ports:
+      - "8093:8090"
+    volumes:
+      # Local inputs live in ./data (gitignored), mounted read-only as /data; the defaults of
+      # /v1/load-local (topology.csv, config.csv, mr_report.xlsx) resolve inside it.
+      - ./data:/data:ro
+      - ./var:/srv/var
+
+  # Generic mode (profile `generic`): runnable by anyone from a plain clone. TWIN_GENERIC=1 makes
+  # the service build its fictional estate at startup; every output carries the rung
+  # "simulation, generic 3GPP defaults (uncalibrated)". No volumes on purpose: no local data can
+  # reach the container and nothing it writes outlives it. Same host port, so run one or the other.
+  physics-twin-generic:
+    build: .
+    container_name: physics-twin-generic
+    profiles: ["generic"]
+    environment:
+      TWIN_GENERIC: "1"
+    ports:
+      - "8093:8090"

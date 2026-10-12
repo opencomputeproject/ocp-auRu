@@ -1,0 +1,57 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 UGECO Private Limited
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+module ocp-ruapp-policy {
+  yang-version 1.1;
+  namespace "urn:ocp:auru:ruapp-policy:1.0";
+  prefix "orp";
+
+  import o-ran-uplane-conf { prefix "o-ran-uplane-conf"; }
+
+  organization "Open Compute Project, AI Wireless / Autonomous AI-RU program (Apache-2.0)";
+  description
+    "Demo extension: per-carrier tunables for a ruApp hosted in the O-RU. The policy
+     envelope itself is the standard o-ran-uplane-conf tx-array-carriers/active leaf:
+     SLEEP permits a local SLEEP->ACTIVE wake; INACTIVE forbids it. This module only
+     parameterises the local decision. Candidate input to a community
+     'policy -> M-Plane -> ruApp' contract.";
+
+  revision 2026-08-25 { description "Initial demo revision."; }
+
+  container ruapp-policy {
+    list carrier {
+      key "name";
+      leaf name {
+        type leafref { path "/o-ran-uplane-conf:user-plane-configuration/o-ran-uplane-conf:tx-array-carriers/o-ran-uplane-conf:name"; }
+        description "The tx-array-carrier this policy applies to.";
+      }
+      leaf wake-on-prach {
+        type boolean; default true;
+        description "Permit the ruApp to bring a SLEEP carrier to ACTIVE when PRACH energy is detected.";
+      }
+      leaf prach-energy-threshold-db {
+        type int16; units dB; default 10;
+        description "Minimum detected PRACH energy above the noise floor that counts as demand.";
+      }
+      leaf min-hold-after-wake-s {
+        type uint16; units seconds; default 30;
+        description "After a local wake the RU rejects a new SLEEP request for this long.";
+      }
+      leaf report-interval-s {
+        type uint16; units seconds; default 5;
+        description "PM reporting interval for the carrier (demo-accelerated).";
+      }
+    }
+  }
+}

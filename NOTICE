@@ -1,0 +1,67 @@
+OCP Autonomous AI-RU reference implementation
+Copyright 2026 UGECO Private Limited
+
+This project is contributed to the Open Compute Project (OCP) AI Wireless / Autonomous AI-RU program under the Apache License 2.0.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+--------------------------------------------------------------------------------
+THIRD-PARTY NOTICES
+--------------------------------------------------------------------------------
+
+1. demo/nonrtric/policy-service/config/application-policyagent.yaml
+
+   This file originates from the O-RAN Software Community Non-RT RIC (NONRTRIC)
+   project, A1 Policy Management Service.
+
+   Copyright (C) 2020-2023 Nordix Foundation. All rights reserved.
+   Copyright (C) 2024 OpenInfra Foundation Europe. All rights reserved.
+
+   Licensed under the Apache License, Version 2.0. The file keeps its own
+   license header unchanged.
+
+2. O-RAN Software Community NONRTRIC container images
+
+   The `full` profile of the demo pulls container images at run time from the
+   O-RAN SC registry (Information Coordinator Service, rApp Catalogue, A1
+   Policy Management Service, A1 simulator). They remain under their own
+   licenses. No O-RAN SC code other than the file named in item 1 is
+   redistributed in this repository.
+
+3. Python dependencies
+
+   The Python packages named in the pyproject.toml and requirements files are
+   installed at setup time and remain under their respective licenses. None
+   are vendored in this repository.
+
+4. O-RAN ALLIANCE and 3GPP specifications
+
+   The code refers to the O-RAN WG4 M-Plane YANG model `o-ran-uplane-conf` and
+   to 3GPP TR 38.901 by name and implements parts of their behaviour. No
+   specification text and no O-RAN YANG module file is redistributed in this
+   repository.
+
+--------------------------------------------------------------------------------
+DISCLAIMER
+--------------------------------------------------------------------------------
+
+This repository is a reference implementation and a reproducible demonstration.
+It is not production software and not a certified O-RAN product.
+
+  * Numbers produced by the demo (wake latency, management plane round trip)
+    are laptop simulation figures and are labelled as such.
+  * The mock O-RU, its radio simulation and its power model are illustrative.
+    Energy figures are relative comparisons under a stated model. They are not
+    measurements.
+  * The physics twin ships with generic 3GPP default parameters and reports the
+    rung "simulation, generic 3GPP defaults (uncalibrated)" on every response.
+  * The data that ships is synthetic.

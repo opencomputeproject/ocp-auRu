@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 UGECO Private Limited
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Column map for 30-minute KPI report CSV exports (HLD ADR-6).
+# Keys are the headers of the source export; values are the canonical columns in
+# ocp_auru.common.events.CANONICAL_KPI_COLUMNS. The keys below are generic placeholders: every
+# management system names its counters differently, so edit this file (or point RAPP_DATA_DIR at
+# a directory holding its own `kpi_report_map.yaml`) to match the headers your export actually has.
+ts_format: "%Y-%m-%d %H:%M:%S"
+# Any source column whose header contains one of these tokens is dropped before mapping.
+drop_columns_containing: ["NULL"]
+# Canonical columns that must be present after mapping; the others become NaN if absent.
+required: [ts, prb_util_dl_pct]
+columns:
+  "period_start": ts
+  "dl_prb_utilization_pct": prb_util_dl_pct
+  "ul_prb_utilization_pct": prb_util_ul_pct
+  "dl_throughput_mbps": thr_dl_mbps
+  "ul_throughput_mbps": thr_ul_mbps
+  "dl_volume_mib": vol_dl_mib
+  "active_users": active_users

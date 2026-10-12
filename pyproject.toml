@@ -1,0 +1,41 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 UGECO Private Limited
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Root of the repository: development tooling only (pytest configuration). Nothing is built or
+# distributed from here. Each service under services/ has its own pyproject.toml.
+
+[tool.pytest.ini_options]
+# `ocp_auru` is a PEP 420 namespace package split across the service folders. The two tests
+# folders listed last hold the shared test helper modules (_mock_ru_helpers, _smo_helpers).
+pythonpath = [
+  "services/common",
+  "services/ocp-rApp-es",
+  "services/ocp-smo",
+  "services/ocp-ru",
+  "services/ocp-ruApp",
+  "services/ocp-ru/tests",
+  "services/ocp-smo/tests",
+]
+testpaths = [
+  "services/ocp-rApp-es/tests",
+  "services/ocp-smo/tests",
+  "services/ocp-ru/tests",
+  "services/ocp-ruApp/tests",
+  "demo/tests",
+]
+timeout = 120
+# importlib mode: test files with equal basenames in different folders do not collide.
+# The physics twin has its own environment and test run (services/ocp-physics-digitalTwin).
+addopts = "--import-mode=importlib"
